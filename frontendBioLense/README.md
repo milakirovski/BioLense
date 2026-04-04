@@ -1,0 +1,1 @@
+# BioLense project frontend documentation
