@@ -8,6 +8,7 @@ import mk.ukim.finki.uikt.biolense.backendbiolense.models.enumerations.CropStatu
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "crops")
@@ -19,7 +20,7 @@ public class Crop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -71,4 +72,17 @@ public class Crop {
         this.plantedAt = plantedAt;
         this.expectedHarvestAt = expectedHarvestAt;
     }
+
+    public Crop(User user, String plantType, String fieldName, BigDecimal areaHectares,
+                LocalDate plantedAt, LocalDate expectedHarvestAt, String notes) {
+        this.user = user;
+        this.plantType = plantType;
+        this.fieldName = fieldName;
+        this.areaHectares = areaHectares;
+        this.plantedAt = plantedAt;
+        this.expectedHarvestAt = expectedHarvestAt;
+        this.notes = notes;
+    }
+
+
 }

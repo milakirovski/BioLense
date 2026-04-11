@@ -94,7 +94,7 @@ public class DataInitializer {
                 LocalDate.of(2025, 4, 20),
                 LocalDate.of(2025, 9, 30)
         );
-        corn.setStatus(CropStatus.DELETED);
+        corn.setStatus(CropStatus.ACTIVE);
         corn.setNotes("Crop lost to pest damage. Filed insurance claim.");
         cropRepository.save(corn);
 
