@@ -8,21 +8,19 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    // create user = admin only
-
     // findAll = admin only
     List<User> findAll();
-
-    // findById = admin only
 
     // delete User // admin only
 
     // findUserByEmail
     User findUserByEmail(String email);
 
-
     // update user information = user only
     User updateProfile(String email, UpdateProfileRequestDto dto);
+
+    // delete account = user only
+    void deleteAccount(String email);
 
 
     User register(String email, String password, String repeatPassword, String firstName, String lastName, String farmName);
@@ -30,8 +28,8 @@ public interface UserService extends UserDetailsService {
     // login
     User login(String email, String password);
 
-    // list User Profile details
-
     //list users based on active or inactive status
     List<User> findByStatus(Boolean isActive);
+
+
 }

@@ -61,6 +61,11 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     }
 
     @Override
+    public void deleteAccount(String email) {
+        userService.deleteAccount(email);
+    }
+
+    @Override
     public List<DisplayUserDto> findByIsActivated(Boolean isActivated) {
         return DisplayUserDto.from(userService.findByStatus(isActivated));
     }

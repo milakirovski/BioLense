@@ -20,5 +20,7 @@ public interface UserApplicationService {
 
     DisplayUserDto updateProfile(String email, UpdateProfileRequestDto dto);
 
+    void deleteAccount(String email);
+
     List<DisplayUserDto> findByIsActivated(Boolean isActivated);
 }

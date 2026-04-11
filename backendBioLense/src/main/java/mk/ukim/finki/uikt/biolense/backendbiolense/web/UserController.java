@@ -93,6 +93,17 @@ public class UserController {
         return ResponseEntity.ok(userApplicationService.updateProfile(currentUser.getEmail(), dto));
     }
 
+    @DeleteMapping("/profile")
+    @Operation(summary = "Delete account", description = "Permanently deletes the currently authenticated user and all their crops")
+    public ResponseEntity<String> deleteAccount(@AuthenticationPrincipal User currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session. No user is logged in yet.");
+        }
+        userApplicationService.deleteAccount(currentUser.getEmail());
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok("Account successfully deleted.");
+    }
+
     @GetMapping("/find-by-email")
     public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
         try{
