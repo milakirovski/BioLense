@@ -8,6 +8,7 @@ import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.crops.UpdateRequestCropD
 import mk.ukim.finki.uikt.biolense.backendbiolense.exceptions.crop.CropIsAlreadyHarvestedException;
 import mk.ukim.finki.uikt.biolense.backendbiolense.exceptions.crop.CropNotFoundException;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
+import mk.ukim.finki.uikt.biolense.backendbiolense.models.enumerations.CropStatus;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.CropApplicationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,8 +70,8 @@ public class CropController {
     }
 
     @GetMapping("/find-by-status")
-    public List<ResponseCropDto> findByStatus(@RequestParam String status){
-        return cropApplicationService.findByStatus(status);
+    public List<ResponseCropDto> findByStatus(@RequestParam CropStatus status){
+        return cropApplicationService.findByStatus(status.name());
     }
 
     @PutMapping("/log-harvest/{id}")

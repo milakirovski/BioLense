@@ -46,7 +46,7 @@ public class CropApplicationServiceImpl implements CropApplicationService {
 
     @Override
     public List<ResponseCropDto> findByStatus(String status) {
-        return ResponseCropDto.from(cropService.findByStatus(status.toUpperCase()));
+        return ResponseCropDto.from(cropService.findByStatus(status));
     }
 
     @Override
