@@ -19,4 +19,6 @@ public interface UserApplicationService {
     DisplayUserDto findByEmail(String email);
 
     DisplayUserDto updateProfile(String email, UpdateProfileRequestDto dto);
+
+    List<DisplayUserDto> findByIsActivated(Boolean isActivated);
 }

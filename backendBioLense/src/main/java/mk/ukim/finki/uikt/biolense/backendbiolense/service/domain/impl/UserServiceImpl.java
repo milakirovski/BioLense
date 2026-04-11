@@ -79,4 +79,11 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
     }
+
+    @Override
+    public List<User> findByStatus(Boolean isActive) {
+        return findAll().stream()
+                .filter(user -> user.getIsActive().equals(isActive))
+                .toList();
+    }
 }

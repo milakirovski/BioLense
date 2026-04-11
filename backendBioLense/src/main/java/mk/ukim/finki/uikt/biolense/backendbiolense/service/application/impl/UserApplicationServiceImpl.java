@@ -59,4 +59,9 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     public DisplayUserDto updateProfile(String email, UpdateProfileRequestDto dto) {
         return DisplayUserDto.from(userService.updateProfile(email, dto));
     }
+
+    @Override
+    public List<DisplayUserDto> findByIsActivated(Boolean isActivated) {
+        return DisplayUserDto.from(userService.findByStatus(isActivated));
+    }
 }

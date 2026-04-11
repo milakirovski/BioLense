@@ -31,4 +31,7 @@ public interface UserService extends UserDetailsService {
     User login(String email, String password);
 
     // list User Profile details
+
+    //list users based on active or inactive status
+    List<User> findByStatus(Boolean isActive);
 }
