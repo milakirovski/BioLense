@@ -1,5 +1,6 @@
 package mk.ukim.finki.uikt.biolense.backendbiolense.service.domain;
 
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.UpdateProfileRequestDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -20,7 +21,8 @@ public interface UserService extends UserDetailsService {
     User findUserByEmail(String email);
 
 
-    //update user information = user only
+    // update user information = user only
+    User updateProfile(String email, UpdateProfileRequestDto dto);
 
 
     User register(String email, String password, String repeatPassword, String firstName, String lastName, String farmName);

@@ -4,6 +4,7 @@ import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.DisplayUserDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.LoginRequestDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.LoginResponseDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.RegisterRequestDto;
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.UpdateProfileRequestDto;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface UserApplicationService {
     List<DisplayUserDto> findAll();
 
     DisplayUserDto findByEmail(String email);
+
+    DisplayUserDto updateProfile(String email, UpdateProfileRequestDto dto);
 }

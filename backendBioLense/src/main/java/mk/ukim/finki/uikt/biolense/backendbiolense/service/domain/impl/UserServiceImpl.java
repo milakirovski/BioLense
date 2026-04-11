@@ -1,5 +1,6 @@
 package mk.ukim.finki.uikt.biolense.backendbiolense.service.domain.impl;
 
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.UpdateProfileRequestDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.exceptions.user.*;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
 import mk.ukim.finki.uikt.biolense.backendbiolense.repositories.UserRepository;
@@ -63,6 +64,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserByEmail(String email) {
         return userRepository.findWithCropsByEmail(email).orElseThrow(() -> new UserAccountDoesntExist(email));
+    }
+
+    @Override
+    public User updateProfile(String email, UpdateProfileRequestDto dto) {
+        User user = userRepository.findWithCropsByEmail(email).orElseThrow(() -> new UserAccountDoesntExist(email));
+        if (dto.firstName() != null) user.setFirstName(dto.firstName());
+        if (dto.lastName() != null) user.setLastName(dto.lastName());
+        if (dto.farmName() != null) user.setFarmName(dto.farmName());
+        return userRepository.save(user);
     }
 
     @Override

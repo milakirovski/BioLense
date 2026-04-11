@@ -4,6 +4,7 @@ import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.DisplayUserDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.LoginRequestDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.LoginResponseDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.RegisterRequestDto;
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.UpdateProfileRequestDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.helpers.JwtHelper;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.UserApplicationService;
@@ -52,5 +53,10 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     @Override
     public DisplayUserDto findByEmail(String email) {
         return DisplayUserDto.from(userService.findUserByEmail(email));
+    }
+
+    @Override
+    public DisplayUserDto updateProfile(String email, UpdateProfileRequestDto dto) {
+        return DisplayUserDto.from(userService.updateProfile(email, dto));
     }
 }

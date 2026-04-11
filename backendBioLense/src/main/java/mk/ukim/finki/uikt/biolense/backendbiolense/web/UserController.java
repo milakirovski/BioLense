@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.DisplayUserDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.LoginRequestDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.RegisterRequestDto;
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.users.UpdateProfileRequestDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.exceptions.user.*;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.UserApplicationService;
@@ -80,6 +81,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session. No user is logged in yet.");
         }
         return ResponseEntity.ok(userApplicationService.findByEmail(currentUser.getEmail()));
+    }
+
+    @PutMapping("/profile")
+    @Operation(summary = "Update profile", description = "Updates the first name, last name or farm name of the currently authenticated user")
+    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal User currentUser,
+                                           @RequestBody UpdateProfileRequestDto dto) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session. No user is logged in yet.");
+        }
+        return ResponseEntity.ok(userApplicationService.updateProfile(currentUser.getEmail(), dto));
     }
 
     @GetMapping("/find-by-email")
