@@ -6,7 +6,6 @@ import mk.ukim.finki.uikt.biolense.backendbiolense.models.Crop;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.enumerations.CropStatus;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -31,6 +30,11 @@ public interface CropService {
 
     // filter by status
     List<Crop> findByStatus(String status);
+
+    List<Crop> filter(String plantType, String fieldName, CropStatus status,
+                      LocalDate plantedAtFrom, LocalDate plantedAtTo,
+                      LocalDate expectedHarvestAtFrom, LocalDate expectedHarvestAtTo,
+                      LocalDate harvestedAtFrom, LocalDate harvestedAtTo);
 
     Crop logCropHarvest(Long cropId);
 }

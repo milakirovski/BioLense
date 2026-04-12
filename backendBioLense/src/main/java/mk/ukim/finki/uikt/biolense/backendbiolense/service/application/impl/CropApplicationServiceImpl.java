@@ -4,10 +4,12 @@ import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.crops.CreateRequestCropD
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.crops.ResponseCropDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.crops.UpdateRequestCropDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
+import mk.ukim.finki.uikt.biolense.backendbiolense.models.enumerations.CropStatus;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.CropApplicationService;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.domain.CropService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -47,6 +49,17 @@ public class CropApplicationServiceImpl implements CropApplicationService {
     @Override
     public List<ResponseCropDto> findByStatus(String status) {
         return ResponseCropDto.from(cropService.findByStatus(status));
+    }
+
+    @Override
+    public List<ResponseCropDto> filter(String plantType, String fieldName, CropStatus status,
+                                        LocalDate plantedAtFrom, LocalDate plantedAtTo,
+                                        LocalDate expectedHarvestAtFrom, LocalDate expectedHarvestAtTo,
+                                        LocalDate harvestedAtFrom, LocalDate harvestedAtTo) {
+        return ResponseCropDto.from(cropService.filter(plantType, fieldName, status,
+                plantedAtFrom, plantedAtTo,
+                expectedHarvestAtFrom, expectedHarvestAtTo,
+                harvestedAtFrom, harvestedAtTo));
     }
 
     @Override

@@ -9,12 +9,14 @@ import mk.ukim.finki.uikt.biolense.backendbiolense.exceptions.crop.CropIsAlready
 import mk.ukim.finki.uikt.biolense.backendbiolense.exceptions.crop.CropNotFoundException;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.enumerations.CropStatus;
+import org.springframework.format.annotation.DateTimeFormat;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.CropApplicationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -72,6 +74,25 @@ public class CropController {
     @GetMapping("/find-by-status")
     public List<ResponseCropDto> findByStatus(@RequestParam CropStatus status){
         return cropApplicationService.findByStatus(status.name());
+    }
+
+    @GetMapping("/filter")
+    @Operation(summary = "Filter crops", description = "Filter crops by any combination of plantType, fieldName, status, and date ranges. All parameters are optional.")
+    public List<ResponseCropDto> filter(
+            @RequestParam(required = false) String plantType,
+            @RequestParam(required = false) String fieldName,
+            @RequestParam(required = false) CropStatus status,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plantedAtFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate plantedAtTo,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expectedHarvestAtFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate expectedHarvestAtTo,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate harvestedAtFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate harvestedAtTo
+    ) {
+        return cropApplicationService.filter(plantType, fieldName, status,
+                plantedAtFrom, plantedAtTo,
+                expectedHarvestAtFrom, expectedHarvestAtTo,
+                harvestedAtFrom, harvestedAtTo);
     }
 
     @PutMapping("/log-harvest/{id}")
