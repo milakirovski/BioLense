@@ -1,10 +1,12 @@
 package mk.ukim.finki.uikt.biolense.backendbiolense.config;
 
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.Crop;
+import mk.ukim.finki.uikt.biolense.backendbiolense.models.Diagnosis;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.enumerations.CropStatus;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.enumerations.UserRole;
 import mk.ukim.finki.uikt.biolense.backendbiolense.repositories.CropRepository;
+import mk.ukim.finki.uikt.biolense.backendbiolense.repositories.DiagnosisRepository;
 import mk.ukim.finki.uikt.biolense.backendbiolense.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -19,12 +21,14 @@ public class DataInitializer {
 
     private final UserRepository userRepository;
     private final CropRepository cropRepository;
+    private final DiagnosisRepository diagnosisRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(UserRepository userRepository, CropRepository cropRepository,
-                           PasswordEncoder passwordEncoder) {
+                           DiagnosisRepository diagnosisRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.cropRepository = cropRepository;
+        this.diagnosisRepository = diagnosisRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -132,6 +136,32 @@ public class DataInitializer {
         potato.setHarvestedAt(LocalDate.of(2025, 8, 25));
         potato.setYieldKgPerHa(new BigDecimal("28000.00"));
         cropRepository.save(potato);
+
+        // --- Diagnoses ---
+        diagnosisRepository.save(new Diagnosis(
+                wheat, "Wheat", "Wheat Rust",
+                0.92, false, "Apply fungicide (propiconazole) at 250 ml/ha"
+        ));
+
+        diagnosisRepository.save(new Diagnosis(
+                corn, "Corn", "Fall Armyworm",
+                0.87, false, "Apply insecticide (chlorantraniliprole). Scout fields weekly."
+        ));
+
+        diagnosisRepository.save(new Diagnosis(
+                tomato, "Tomato", "Early Blight",
+                0.95, false, "Remove affected leaves. Apply copper-based fungicide."
+        ));
+
+        diagnosisRepository.save(new Diagnosis(
+                tomato, "Tomato", null,
+                null, true, null
+        ));
+
+        diagnosisRepository.save(new Diagnosis(
+                pepper, "Red Pepper", "Bacterial Leaf Spot",
+                0.78, false, "Apply copper hydroxide spray. Avoid overhead irrigation."
+        ));
 
     }
 }
