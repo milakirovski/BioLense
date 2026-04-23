@@ -59,17 +59,18 @@ public class PlantIdClientServiceImpl implements PlantIdClientService {
                 .images(Collections.singletonList("data:image/jpeg;base64," + base64Image))
                 .latitude(latitude)
                 .longitude(longitude)
-                .similarImages(similarImages)
-                .health(healthMode)
-                .details("common_names,description,treatment,classification,local_name")
                 .build();
 
         HttpEntity<PlantIdApiRequest> request = new HttpEntity<>(requestBody, headers);
 
-        String url = BASE_URL + "identification";
+        StringBuilder url = new StringBuilder(BASE_URL).append("identification?similar_images=").append(similarImages);
+        if (healthMode != null) {
+            url.append("&health=").append(healthMode);
+        }
+
         log.info("Calling Plant.id [health={}] → {}", healthMode, url);
 
-        return restTemplate.postForObject(url, request, PlantIdResponse.class);
+        return restTemplate.postForObject(url.toString(), request, PlantIdResponse.class);
     }
 
 

@@ -38,6 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Register user", description = "Registers user into the system, create a record in the Users table in the db")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDto registerUserDto) {
         try {
             return ResponseEntity.ok(userApplicationService.register(registerUserDto));
