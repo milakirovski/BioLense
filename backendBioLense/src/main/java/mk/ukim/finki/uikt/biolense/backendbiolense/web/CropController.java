@@ -72,6 +72,7 @@ public class CropController {
     }
 
     @GetMapping("/find-by-status")
+    @Operation(summary = "Filter by crop status")
     public List<ResponseCropDto> findByStatus(@RequestParam CropStatus status){
         return cropApplicationService.findByStatus(status.name());
     }
