@@ -1,66 +1,149 @@
 package mk.ukim.finki.uikt.biolense.backendbiolense.service.application.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.crops.PlantIdResponseDto;
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.request.PlantIdApiRequest;
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantIdResponse;
+import mk.ukim.finki.uikt.biolense.backendbiolense.helpers.ImageHashUtil;
+import mk.ukim.finki.uikt.biolense.backendbiolense.models.PlantApiCache;
+import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.PlantIdCacheService;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.PlantIdClientService;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PlantIdClientServiceImpl implements PlantIdClientService {
 
     @Value("${plant.id.api.key}")
     private String apiKey;
 
-    private final String baseUrl = "https://plant.id/api/v3/";
+    private static final String BASE_URL = "https://plant.id/api/v3/";
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final PlantIdCacheService cacheService;
 
-    @Override
-    public PlantIdResponseDto identifyPlant(MultipartFile image) throws IOException {
+    /**
+     * Single shared method — health mode drives the behavior.
+     *
+     * Before hitting the external API, the cache is checked using the image hash
+     * and GPS coordinates. On a cache miss the API is called and the result stored.
+     *
+     * https://plant.id/api/v3/identification?health=all  → ID + health (+2 credits)
+     * https://plant.id/api/v3/identification?health=auto → ID + health if sick (+1-2 credits)
+     * https://plant.id/api/v3/identification?health=only → health only (+1 credit)
+     * health = null                                       → identification only (+1 credit)
+     */
+    private PlantIdResponse callIdentificationEndpoint(
+            MultipartFile image, String healthMode,
+            Double latitude, Double longitude, boolean similarImages) throws IOException {
+
+        byte[] imageBytes = image.getBytes();
+        String imageHash = ImageHashUtil.sha256(imageBytes);
+        PlantApiCache.RequestType requestType = resolveRequestType(healthMode);
+
+        // ── 1. Cache lookup ──────────────────────────────────────────────────
+        Optional<PlantIdResponse> cached = cacheService.lookup(requestType, imageHash, latitude, longitude);
+        if (cached.isPresent()) {
+            log.info("Cache HIT [type={}, imageHash={}, lat={}, lon={}]",
+                    requestType, imageHash, latitude, longitude);
+            return cached.get();
+        }
+        log.info("Cache MISS — calling Plant.id [type={}, imageHash={}, lat={}, lon={}]",
+                requestType, imageHash, latitude, longitude);
+
+        // ── 2. External API call ─────────────────────────────────────────────
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "multipart/form-data");
+        headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Api-Key", apiKey);
 
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("image", new ByteArrayResource(image.getBytes()) {
-            @Override
-            public String getFilename() {
-                return image.getOriginalFilename();
-            }
-        });
+        String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
-        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
+        PlantIdApiRequest requestBody = PlantIdApiRequest.builder()
+                .images(Collections.singletonList("data:image/jpeg;base64," + base64Image))
+                .latitude(latitude)
+                .longitude(longitude)
+                .build();
 
-        return restTemplate.postForObject(baseUrl + "identification", request, PlantIdResponseDto.class);
+        HttpEntity<PlantIdApiRequest> request = new HttpEntity<>(requestBody, headers);
+
+        StringBuilder url = new StringBuilder(BASE_URL)
+                .append("identification?similar_images=").append(similarImages);
+        if (healthMode != null) {
+            url.append("&health=").append(healthMode);
+        }
+
+        log.info("Calling Plant.id [health={}] → {}", healthMode, url);
+
+        PlantIdResponse response = restTemplate.postForObject(url.toString(), request, PlantIdResponse.class);
+
+        // ── 3. Persist to cache ──────────────────────────────────────────────
+        if (response != null) {
+            cacheService.store(requestType, imageHash, latitude, longitude, response);
+        }
+
+        return response;
     }
 
+    /** Maps a Plant.id health mode string to our internal RequestType enum. */
+    private PlantApiCache.RequestType resolveRequestType(String healthMode) {
+        if (healthMode == null)         return PlantApiCache.RequestType.IDENTIFY;
+        return switch (healthMode) {
+            case "only" -> PlantApiCache.RequestType.HEALTH_ONLY;
+            case "all"  -> PlantApiCache.RequestType.FULL_DIAGNOSIS;
+            case "auto" -> PlantApiCache.RequestType.AUTO_DIAGNOSIS;
+            default     -> PlantApiCache.RequestType.IDENTIFY;
+        };
+    }
 
+    // ── Public API ────────────────────────────────────────────────────────────
+
+    /** Identification only — no health data. Cost: 1 credit. */
     @Override
-    public PlantIdResponseDto assessHealth(MultipartFile image) throws IOException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "multipart/form-data");
-        headers.set("Api-Key", apiKey);
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("image", new ByteArrayResource(image.getBytes()) {
-            @Override
-            public String getFilename() {
-                return image.getOriginalFilename();
-            }
-        });
-        body.add("health", "only");
-        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
-        return restTemplate.postForObject(baseUrl + "health_assessment", request, PlantIdResponseDto.class);
+    public PlantIdResponse identifyPlant(MultipartFile image, Double latitude,
+                                         Double longitude, boolean similarImages) throws IOException {
+        return callIdentificationEndpoint(image, null, latitude, longitude, similarImages);
+    }
 
+    /**
+     * Health assessment only — no species identification context.
+     * Cost: 1 credit. Lower accuracy because the species is unknown.
+     */
+    @Override
+    public PlantIdResponse assessHealthOnly(MultipartFile image, Double latitude,
+                                            Double longitude, boolean similarImages) throws IOException {
+        return callIdentificationEndpoint(image, "only", latitude, longitude, similarImages);
+    }
+
+    /**
+     * Identification + health together in one request.
+     * The identified species is used to narrow down likely diseases.
+     * Cost: 2 credits.
+     */
+    @Override
+    public PlantIdResponse fullyDiagnoseCrop(MultipartFile image, Double latitude,
+                                             Double longitude, boolean similarImages) throws IOException {
+        return callIdentificationEndpoint(image, "all", latitude, longitude, similarImages);
+    }
+
+    /**
+     * Identification + health only if something looks wrong.
+     * Cost: 1 credit (healthy) or 2 credits (disease detected).
+     */
+    @Override
+    public PlantIdResponse diagnoseCropAuto(MultipartFile image, Double latitude,
+                                            Double longitude, boolean similarImages) throws IOException {
+        return callIdentificationEndpoint(image, "auto", latitude, longitude, similarImages);
     }
 }
