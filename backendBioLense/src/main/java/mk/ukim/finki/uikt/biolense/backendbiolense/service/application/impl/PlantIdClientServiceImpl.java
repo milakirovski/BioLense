@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.request.PlantIdApiRequest;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantIdResponse;
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantIdUsageResponse;
 import mk.ukim.finki.uikt.biolense.backendbiolense.helpers.ImageHashUtil;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.PlantApiCache;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.PlantIdCacheService;
@@ -145,5 +146,21 @@ public class PlantIdClientServiceImpl implements PlantIdClientService {
     public PlantIdResponse diagnoseCropAuto(MultipartFile image, Double latitude,
                                             Double longitude, boolean similarImages) throws IOException {
         return callIdentificationEndpoint(image, "auto", latitude, longitude, similarImages);
+    }
+
+    /** Returns credit usage information for the configured API key. */
+    @Override
+    public PlantIdUsageResponse getUsageInfo() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Api-Key", apiKey);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        return restTemplate.exchange(
+                BASE_URL + "usage_info",
+                org.springframework.http.HttpMethod.GET,
+                request,
+                PlantIdUsageResponse.class
+        ).getBody();
     }
 }

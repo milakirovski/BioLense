@@ -5,9 +5,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantIdResponse;
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantIdUsageResponse;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.PlantIdClientService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -73,5 +75,11 @@ public class CropDiagnosisController {
             @RequestParam(required = false) Double longitude,
             @RequestParam(defaultValue = "true") boolean similarImages) throws IOException {
         return ResponseEntity.ok(plantIdClientService.diagnoseCropAuto(image, latitude, longitude, similarImages));
+    }
+
+    @GetMapping("/usage")
+    @Operation(summary = "Check Plant.id API credit usage", description = "Returns credit limits, used credits, and remaining credits for the configured API key")
+    public ResponseEntity<PlantIdUsageResponse> getUsageInfo() {
+        return ResponseEntity.ok(plantIdClientService.getUsageInfo());
     }
 }
