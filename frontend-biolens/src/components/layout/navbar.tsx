@@ -5,7 +5,7 @@ import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const LinkItems = [
-    { name: 'Dashboard', href: '/' },
+    { name: 'Dashboard', href: '/dashboard' },
     { name: 'Analysis Lab', href: '/analysis' },
     { name: 'History & Reports', href: '/history' },
     { name: 'Settings', href: '/settings' },

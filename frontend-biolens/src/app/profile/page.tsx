@@ -14,10 +14,10 @@ import {
 
 export default function ProfilePage() {
     return (
-        <Container maxW="full" py="8" px="8">
+        <Container maxW="full" py="2" px="8">
             <VStack align="stretch" gap="6">
 
-                <Heading size="lg" color="green.800" mb="2">User Profile</Heading>
+                <Heading size="3xl" color="green.800" mb="2">User Profile</Heading>
 
                 <Flex gap="8" direction={{ base: "column", lg: "row" }} align="flex-start">
 
