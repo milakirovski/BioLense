@@ -33,17 +33,11 @@ const historyData = [
 // --- ГЛАВНА КОМПОНЕНТА ---
 export default function HistoryPage() {
     return (
-        <Container maxW="full" py="8" px="8">
+        <Container maxW="full" py="2" px="8">
             <VStack gap="8" align="stretch" w="full">
 
-                {/* НАСЛОВ И ГЛАВНО КОПЧЕ */}
-                <HStack justify="space-between">
-                    <Heading size="lg" color="green.800">History & Reports</Heading>
-                    <Button colorPalette="green" variant="solid" gap="2" size="lg">
-                        <FiDownload />
-                        <Text>Export All Data</Text>
-                    </Button>
-                </HStack>
+                {/* НАСЛОВ */}
+                <Heading size="3xl" color="green.800">History & Reports</Heading>
 
                 <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap="6">
                     <StatCard
