@@ -71,6 +71,7 @@ export const Navbar = () => {
                     <NextLink href="/profile" passHref>
                         <Box
                             as="button"
+                            cursor="pointer"
                             bg="green.50"
                             color="green.700"
                             w="12"
@@ -84,6 +85,7 @@ export const Navbar = () => {
                             borderColor="green.100"
                             _hover={{ bg: "green.100", transform: "scale(1.05)" }}
                             transition="0.2s"
+                            suppressHydrationWarning
                         >
                             MS
                         </Box>
