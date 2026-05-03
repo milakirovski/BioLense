@@ -1,32 +1,23 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Providers } from './providers'
+'use client'
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
+import { usePathname } from 'next/navigation'
+import { Providers } from "./providers"
+import { Navbar } from "@/components/layout/navbar"
+import { Box } from "@chakra-ui/react"
 
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname()
+    const isLoginPage = pathname === '/login'
 
-export const metadata: Metadata = {
-    title: "BioLens - AI Plant Analysis",
-    description: "Advanced disease detection system for plants",
-};
-
-export default function RootLayout({
-                                       children,
-                                   }: {
-    children: React.ReactNode
-}) {
     return (
         <html lang="en" suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Providers>{children}</Providers>
+        <body>
+        <Providers>
+            {!isLoginPage && <Navbar />}
+            <Box as="main" p="8" bg={isLoginPage ? "white" : "gray.50"} minHeight="100vh">
+                {children}
+            </Box>
+        </Providers>
         </body>
         </html>
     )
