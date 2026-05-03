@@ -9,12 +9,10 @@ import {
     Input,
     Button,
     Table,
-    Badge,
     Icon,
     Container,
     Flex,
-    SimpleGrid,
-    Stack
+    SimpleGrid
 } from '@chakra-ui/react'
 import { FiDownload, FiFileText, FiTable, FiMapPin } from 'react-icons/fi'
 import { StatusBadge } from '@/components/history/StatusBadge'

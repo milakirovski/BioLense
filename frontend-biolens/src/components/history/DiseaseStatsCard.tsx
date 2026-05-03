@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Heading, VStack, Stack, Text, HStack } from '@chakra-ui/react'
+import { Box, Heading, Stack, Text, HStack } from '@chakra-ui/react'
 
 interface DiseaseStatsCardProps {
     data: any[]
