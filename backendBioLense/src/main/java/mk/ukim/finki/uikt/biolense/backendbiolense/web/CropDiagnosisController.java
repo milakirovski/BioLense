@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.DiagnosisResponseDto;
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.IdHistoryResponseDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantIdResponse;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantIdUsageResponse;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.CropDiagnosisService;
@@ -122,5 +123,13 @@ public class CropDiagnosisController {
     @Operation(summary = "Check Plant.id API credit usage", description = "Returns credit limits, used credits, and remaining credits for the configured API key")
     public ResponseEntity<PlantIdUsageResponse> getUsageInfo() {
         return ResponseEntity.ok(plantIdClientService.getUsageInfo());
+    }
+
+    @GetMapping("/identification-history/{cropId}/")
+    @Operation(summary = "List identification history for a specific crop")
+    public ResponseEntity<List<IdHistoryResponseDto>> findIdentificationHistoryByCropId(
+            @Parameter(description = "Crop ID", required = true)
+            @PathVariable Long cropId) {
+        return ResponseEntity.ok(cropDiagnosisService.findIdentificationHistoryByCropId(cropId));
     }
 }
