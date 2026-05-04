@@ -266,7 +266,7 @@ public class CropDiagnosisServiceImpl implements CropDiagnosisService {
             return null;
         }
 
-        return items.getFirst();
+        return items.get(0);
     }
 
 
@@ -282,7 +282,7 @@ public class CropDiagnosisServiceImpl implements CropDiagnosisService {
         return response.getResult()
                 .getClassification()
                 .getSuggestions()
-                .getFirst()
+                .get(0)
                 .getName();
     }
 
@@ -298,7 +298,7 @@ public class CropDiagnosisServiceImpl implements CropDiagnosisService {
         return response.getResult()
                 .getDisease()
                 .getSuggestions()
-                .getFirst()
+                .get(0)
                 .getName();
     }
 
@@ -314,7 +314,7 @@ public class CropDiagnosisServiceImpl implements CropDiagnosisService {
         return response.getResult()
                 .getDisease()
                 .getSuggestions()
-                .getFirst()
+                .get(0)
                 .getProbability();
     }
 
@@ -336,15 +336,15 @@ public class CropDiagnosisServiceImpl implements CropDiagnosisService {
                 response.getResult().getDisease() == null ||
                 response.getResult().getDisease().getSuggestions() == null ||
                 response.getResult().getDisease().getSuggestions().isEmpty() ||
-                response.getResult().getDisease().getSuggestions().getFirst().getDetails() == null ||
-                response.getResult().getDisease().getSuggestions().getFirst().getDetails().getTreatment() == null) {
+                response.getResult().getDisease().getSuggestions().get(0).getDetails() == null ||
+                response.getResult().getDisease().getSuggestions().get(0).getDetails().getTreatment() == null) {
             return null;
         }
 
         PlantIdResponse.Treatment treatment = response.getResult()
                 .getDisease()
                 .getSuggestions()
-                .getFirst()
+                .get(0)
                 .getDetails()
                 .getTreatment();
 
