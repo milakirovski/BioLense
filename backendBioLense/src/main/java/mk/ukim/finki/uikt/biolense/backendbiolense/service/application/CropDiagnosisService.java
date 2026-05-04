@@ -1,6 +1,7 @@
 package mk.ukim.finki.uikt.biolense.backendbiolense.service.application;
 
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.DiagnosisResponseDto;
+import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.IdHistoryResponseDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantIdResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,4 +19,5 @@ public interface CropDiagnosisService {
     List<DiagnosisResponseDto> findAll();
 
     List<DiagnosisResponseDto> findAllByCropId(Long cropId);
+    List<IdHistoryResponseDto> findIdentificationHistoryByCropId(Long cropId);
 }
