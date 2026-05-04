@@ -9,5 +9,5 @@ public interface DiagnosisRepository extends JpaRepository<Diagnosis, Long> {
 
     List<Diagnosis> findByCropUserId(Long userId);
 
-    List<Diagnosis> findByCropId(Long cropId);
+    List<Diagnosis> findAllByCropId(Long cropId);
 }

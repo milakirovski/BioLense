@@ -2,18 +2,24 @@ package mk.ukim.finki.uikt.biolense.backendbiolense.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.enumerations.CropStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "crops")
 @NoArgsConstructor
 @Data
+@Getter
+@Setter
 public class Crop {
 
     @Id
@@ -55,6 +61,13 @@ public class Crop {
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
+
+    @OneToMany(mappedBy = "crop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Diagnosis> diagnoses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "crop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<IdentificationHistory> identificationHistories = new ArrayList<>();
+
 //    @PrePersist
 //    private void prePersist() {
 //        if (createdAt == null) {
@@ -62,6 +75,25 @@ public class Crop {
 //        }
 //    }
 
+    public void addDiagnosis(Diagnosis diagnosis) {
+        diagnoses.add(diagnosis);
+        diagnosis.setCrop(this);
+    }
+
+    public void removeDiagnosis(Diagnosis diagnosis) {
+        diagnoses.remove(diagnosis);
+        diagnosis.setCrop(null);
+    }
+
+    public void addIdentificationHistory(IdentificationHistory identificationHistory) {
+        identificationHistories.add(identificationHistory);
+        identificationHistory.setCrop(this);
+    }
+
+    public void removeIdentificationHistory(IdentificationHistory identificationHistory) {
+        identificationHistories.remove(identificationHistory);
+        identificationHistory.setCrop(null);
+    }
 
     public Crop(User user, String plantType, String fieldName, BigDecimal areaHectares,
                 LocalDate plantedAt, LocalDate expectedHarvestAt) {
