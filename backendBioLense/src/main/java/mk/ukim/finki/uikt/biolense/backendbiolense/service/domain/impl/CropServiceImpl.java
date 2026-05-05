@@ -75,14 +75,14 @@ public class CropServiceImpl implements CropService {
                              LocalDate harvestedAtFrom, LocalDate harvestedAtTo) {
         Specification<Crop> spec = Specification
                 .where(CropSpecification.hasPlantType(plantType))
-                .or(CropSpecification.hasFieldName(fieldName))
-                .or(CropSpecification.hasStatus(status))
-                .or(CropSpecification.plantedAtFrom(plantedAtFrom))
-                .or(CropSpecification.plantedAtTo(plantedAtTo))
-                .or(CropSpecification.expectedHarvestAtFrom(expectedHarvestAtFrom))
-                .or(CropSpecification.expectedHarvestAtTo(expectedHarvestAtTo))
-                .or(CropSpecification.harvestedAtFrom(harvestedAtFrom))
-                .or(CropSpecification.harvestedAtTo(harvestedAtTo));
+                .and(CropSpecification.hasFieldName(fieldName))
+                .and(CropSpecification.hasStatus(status))
+                .and(CropSpecification.plantedAtFrom(plantedAtFrom))
+                .and(CropSpecification.plantedAtTo(plantedAtTo))
+                .and(CropSpecification.expectedHarvestAtFrom(expectedHarvestAtFrom))
+                .and(CropSpecification.expectedHarvestAtTo(expectedHarvestAtTo))
+                .and(CropSpecification.harvestedAtFrom(harvestedAtFrom))
+                .and(CropSpecification.harvestedAtTo(harvestedAtTo));
         return cropRepository.findAll(spec);
     }
 
