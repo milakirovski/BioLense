@@ -1,6 +1,7 @@
 package mk.ukim.finki.uikt.biolense.backendbiolense.service.application.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.weather.WeatherResponseDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.WeatherService;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class WeatherServiceImpl implements WeatherService {
                     ",windspeed_10m_max";
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public WeatherResponseDto getForecast(double lat, double lon) {
@@ -32,14 +34,25 @@ public class WeatherServiceImpl implements WeatherService {
                 + "&timezone=auto"
                 + "&forecast_days=7";
 
-        JsonNode response;
+        String rawJson;
         try {
-            response = restTemplate.getForObject(url, JsonNode.class);
+            rawJson = restTemplate.getForObject(url, String.class);
         } catch (RestClientException e) {
             throw new RuntimeException("Failed to fetch weather data: " + e.getMessage(), e);
         }
 
-        if (response == null || !response.has("daily")) {
+        if (rawJson == null) {
+            throw new RuntimeException("Empty response from Open-Meteo API");
+        }
+
+        JsonNode response;
+        try {
+            response = objectMapper.readTree(rawJson);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse weather response: " + e.getMessage(), e);
+        }
+
+        if (!response.has("daily")) {
             throw new RuntimeException("Invalid response from Open-Meteo API");
         }
 
@@ -66,9 +79,7 @@ public class WeatherServiceImpl implements WeatherService {
             ));
         }
 
-        String wateringRec = buildWateringRecommendation(forecasts);
-
-        return new WeatherResponseDto(forecasts, wateringRec);
+        return new WeatherResponseDto(forecasts, buildWateringRecommendation(forecasts));
     }
 
     private String buildWateringRecommendation(List<WeatherResponseDto.DailyForecast> forecasts) {
