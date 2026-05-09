@@ -26,7 +26,7 @@ function getDayLabel(dateStr: string): string {
 
 export const WeatherWidget = ({ weather, isLoading, cropCount }: WeatherWidgetProps) => {
   if (isLoading || !weather) {
-    return <Skeleton h="160px" borderRadius="2xl" startColor="green.600" endColor="green.800" />
+    return <Skeleton h="160px" borderRadius="2xl" />
   }
 
   const today = weather.forecast[0]
