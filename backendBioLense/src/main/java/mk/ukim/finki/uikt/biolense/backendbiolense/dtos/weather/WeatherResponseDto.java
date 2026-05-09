@@ -10,6 +10,10 @@ public record WeatherResponseDto(
             String date,
             Double temperatureMax,
             Double temperatureMin,
-            Double precipitationMm
+            Double precipitationMm,
+            Integer precipitationProbability,
+            Integer humidityMax,
+            Double windSpeedMax
+
     ) {}
 }
