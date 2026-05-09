@@ -1,4 +1,4 @@
-### Stage 1: Build the frontend ###
+### Stage 1: Build frontend ###
 FROM node:22-alpine AS frontend-build
 
 WORKDIR /frontend
@@ -12,17 +12,15 @@ COPY frontend-biolens/ ./
 RUN npm run build
 
 
-### Stage 2: Build the backend ###
+### Stage 2: Build backend ###
 FROM maven:3.9.9-eclipse-temurin-17 AS backend-build
 
 WORKDIR /backend
 
 COPY backendBioLense/pom.xml ./
-
 RUN mvn dependency:go-offline -B
 
 COPY backendBioLense/ ./
-
 RUN mvn clean package -DskipTests
 
 
@@ -39,15 +37,10 @@ ENV FRONTEND_PORT=3000
 
 COPY --from=backend-build /backend/target/*.jar /app/backend.jar
 
-COPY frontend-biolens/package.json frontend-biolens/package-lock.json /app/frontend/
-
-WORKDIR /app/frontend
-
-RUN npm ci --omit=dev
-
+### IMPORTANT: copy ONLY built frontend
 COPY --from=frontend-build /frontend/.next /app/frontend/.next
 COPY --from=frontend-build /frontend/public /app/frontend/public
-COPY --from=frontend-build /frontend/next.config.ts /app/frontend/next.config.ts
+COPY --from=frontend-build /frontend/package.json /app/frontend/package.json
 
 WORKDIR /app
 
