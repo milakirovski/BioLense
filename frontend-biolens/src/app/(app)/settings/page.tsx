@@ -1,10 +1,5 @@
-'use client'
-import { Heading, Container } from "@chakra-ui/react"
+import { SettingsLayout } from '@/components/settings/SettingsLayout'
 
 export default function Page() {
-    return (
-        <Container maxW="full" py="2" px="8">
-            <Heading size="3xl">Settings</Heading>
-        </Container>
-    )
+  return <SettingsLayout />
 }
