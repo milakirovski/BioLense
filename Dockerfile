@@ -5,11 +5,17 @@ WORKDIR /frontend
 
 COPY frontend-biolens/package.json frontend-biolens/package-lock.json ./
 
-RUN npm ci
+
+RUN npm install
 
 COPY frontend-biolens/ ./
 
-RUN npm run build
+RUN rm -rf .next
+
+ENV NEXT_DISABLE_TURBOPACK=1
+ENV NEXT_RUNTIME=nodejs
+ENV NODE_ENV=production
+RUN NEXT_DISABLE_TURBOPACK=1 npx next build
 
 
 ### Stage 2: Build backend ###
@@ -38,10 +44,7 @@ ENV FRONTEND_PORT=3000
 COPY --from=backend-build /backend/target/*.jar /app/backend.jar
 
 ### IMPORTANT: copy ONLY built frontend
-COPY --from=frontend-build /frontend/.next /app/frontend/.next
-COPY --from=frontend-build /frontend/public /app/frontend/public
-COPY --from=frontend-build /frontend/package.json /app/frontend/package.json
-
+COPY --from=frontend-build /frontend /app/frontend
 WORKDIR /app
 
 EXPOSE 8080
