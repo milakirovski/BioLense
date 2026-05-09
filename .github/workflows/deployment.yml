@@ -28,7 +28,9 @@ jobs:
             docker rm spring-app || true
 
             echo "Building image..."
-            docker build -t spring-app .
+            docker build \
+            --build-arg NEXT_PUBLIC_BACKEND_URL=${{ secrets.BACKEND_URL }} \
+            -t spring-app .
 
             echo "Starting container..."
             docker run -d \
