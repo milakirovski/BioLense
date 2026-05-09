@@ -1,24 +1,17 @@
-'use client'
+import type { Metadata } from 'next'
+import { Providers } from './providers'
 
-import { usePathname } from 'next/navigation'
-import { Providers } from "./providers"
-import { Navbar } from "@/components/layout/navbar"
-import { Box } from "@chakra-ui/react"
+export const metadata: Metadata = {
+  title: 'BioLens',
+  description: 'AI-powered crop disease diagnosis',
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname()
-    const isLoginPage = pathname === '/login'
-
-    return (
-        <html lang="en" suppressHydrationWarning>
-        <body>
-        <Providers>
-            {!isLoginPage && <Navbar />}
-            <Box as="main" p="8" bg={isLoginPage ? "white" : "gray.50"} minHeight="100vh">
-                {children}
-            </Box>
-        </Providers>
-        </body>
-        </html>
-    )
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
 }
