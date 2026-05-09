@@ -65,6 +65,9 @@ public class Crop {
     @OneToMany(mappedBy = "crop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Diagnosis> diagnoses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "crop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<IdentificationHistory> identificationHistories = new ArrayList<>();
+
 //    @PrePersist
 //    private void prePersist() {
 //        if (createdAt == null) {
@@ -80,6 +83,16 @@ public class Crop {
     public void removeDiagnosis(Diagnosis diagnosis) {
         diagnoses.remove(diagnosis);
         diagnosis.setCrop(null);
+    }
+
+    public void addIdentificationHistory(IdentificationHistory identificationHistory) {
+        identificationHistories.add(identificationHistory);
+        identificationHistory.setCrop(this);
+    }
+
+    public void removeIdentificationHistory(IdentificationHistory identificationHistory) {
+        identificationHistories.remove(identificationHistory);
+        identificationHistory.setCrop(null);
     }
 
     public Crop(User user, String plantType, String fieldName, BigDecimal areaHectares,
