@@ -1,13 +1,10 @@
 name: Deploy to Oracle VM
-
 on:
   push:
     branches: [ "master" ]
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -15,27 +12,24 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
+          envs: BACKEND_URL
           script: |
             set -e
-
             cd ~/apps/Biolense
-
             echo "Pulling latest code..."
             git pull origin master
-
             echo "Stopping container..."
             docker stop spring-app || true
             docker rm spring-app || true
-
             echo "Building image..."
-            docker build --build-arg NEXT_PUBLIC_BACKEND_URL=${{ secrets.BACKEND_URL }} -t spring-app .
-
+            docker build --build-arg NEXT_PUBLIC_BACKEND_URL="$BACKEND_URL" -t spring-app .
             echo "Starting container..."
             docker run -d \
               --name spring-app \
               -p 8080:8080 \
               -p 80:3000 \
               spring-app
-
             echo "Cleanup..."
             docker image prune -f
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
