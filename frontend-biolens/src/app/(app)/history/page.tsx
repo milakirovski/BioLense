@@ -9,7 +9,6 @@ import {
     Input,
     Button,
     Table,
-    Icon,
     Container,
     Flex,
     SimpleGrid
@@ -19,6 +18,7 @@ import { StatusBadge } from '@/components/history/StatusBadge'
 import {DiseaseStatsCard} from "@/components/history/DiseaseStatsCard";
 import {HealthOverviewCharts} from "@/components/history/HealthOverviewCharts";
 import { StatCard } from "@/components/shared/StatCard";
+import ExportOption from "../../../components/history/ExportOption";
 
 // --- ПОДАТОЦИ ---
 const historyData = [
@@ -172,22 +172,5 @@ export default function HistoryPage() {
                 </Flex>
             </VStack>
         </Container>
-    )
-}
-
-// --- ПОМОШНИ КОМПОНЕНТИ ---
-
-function ExportOption({ icon, title, desc, color }: any) {
-    return (
-        <HStack w="full" p="3" border="1px solid" borderColor="gray.50" borderRadius="lg" _hover={{ bg: "gray.50", cursor: "pointer" }} transition="0.2s">
-            <Box p="2" bg={`${color}.50`} borderRadius="md" color={`${color}.500`}>
-                <Icon as={icon} />
-            </Box>
-            <VStack align="flex-start" gap="0" flex="1">
-                <Text fontSize="sm" fontWeight="bold">{title}</Text>
-                <Text fontSize="xs" color="gray.500">{desc}</Text>
-            </VStack>
-            <Icon as={FiDownload} color="gray.300" fontSize="xs" />
-        </HStack>
     )
 }

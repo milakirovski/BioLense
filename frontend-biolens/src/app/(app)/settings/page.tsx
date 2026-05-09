@@ -11,10 +11,9 @@ import {
     Input,
     Button,
     Avatar,
-    Switch,
-    Icon,
-} from '@chakra-ui/react';
+    Switch} from '@chakra-ui/react';
 import { FiUser, FiBell, FiShield, FiMap } from 'react-icons/fi';
+import NavButton from '@/components/settings/NavButton';
 
 export default function SettingsPage() {
     const bgColor = 'white';
@@ -158,26 +157,5 @@ export default function SettingsPage() {
                 </Box>
             </Flex>
         </Box>
-    );
-}
-
-// Navigation Button Component
-function NavButton({ icon, label, active }: any) {
-    return (
-        <HStack
-            px="4"
-            py="3"
-            borderRadius="md"
-            bg={active ? 'green.50' : 'transparent'}
-            color={active ? 'green.700' : 'gray.600'}
-            cursor="pointer"
-            transition="0.2s"
-            _hover={{ bg: 'gray.50' }}
-        >
-            <Icon as={icon} />
-            <Text fontWeight={active ? '600' : '400'}>
-                {label}
-            </Text>
-        </HStack>
     );
 }
