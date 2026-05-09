@@ -18,7 +18,7 @@ import { FiDownload, FiFileText, FiTable, FiMapPin } from 'react-icons/fi'
 import { StatusBadge } from '@/components/history/StatusBadge'
 import {DiseaseStatsCard} from "@/components/history/DiseaseStatsCard";
 import {HealthOverviewCharts} from "@/components/history/HealthOverviewCharts";
-import {StatCard} from "@/components/history/StatCard";
+import { StatCard } from "@/components/shared/StatCard";
 
 // --- ПОДАТОЦИ ---
 const historyData = [
