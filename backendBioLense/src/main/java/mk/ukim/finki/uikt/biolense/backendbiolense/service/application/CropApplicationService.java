@@ -11,21 +11,21 @@ import java.util.List;
 
 public interface CropApplicationService {
 
-    List<ResponseCropDto> findAll();
-    ResponseCropDto findById(Long id);
+    List<ResponseCropDto> findAllByUser(User user);
+    ResponseCropDto findById(Long id, User user);
 
     ResponseCropDto create(CreateRequestCropDto createRequestCropDto, User owner);
 
-    ResponseCropDto update(Long cropId, UpdateRequestCropDto updateRequestCropDto);
+    ResponseCropDto update(Long cropId, UpdateRequestCropDto updateRequestCropDto, User user);
 
-    void delete(Long id);
+    void delete(Long id, User user);
 
-    List<ResponseCropDto> findByStatus(String status);
+    List<ResponseCropDto> findByStatus(String status, User user);
 
     List<ResponseCropDto> filter(String plantType, String fieldName, CropStatus status,
                                  LocalDate plantedAtFrom, LocalDate plantedAtTo,
                                  LocalDate expectedHarvestAtFrom, LocalDate expectedHarvestAtTo,
-                                 LocalDate harvestedAtFrom, LocalDate harvestedAtTo);
+                                 LocalDate harvestedAtFrom, LocalDate harvestedAtTo, User user);
 
-    ResponseCropDto logCropHarvest(Long cropId);
+    ResponseCropDto logCropHarvest(Long cropId, User user);
 }
