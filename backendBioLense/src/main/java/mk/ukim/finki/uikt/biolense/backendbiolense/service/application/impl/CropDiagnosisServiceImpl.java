@@ -9,6 +9,7 @@ import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantId
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.Crop;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.Diagnosis;
 import mk.ukim.finki.uikt.biolense.backendbiolense.models.IdentificationHistory;
+import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
 import mk.ukim.finki.uikt.biolense.backendbiolense.repositories.CropRepository;
 import mk.ukim.finki.uikt.biolense.backendbiolense.repositories.DiagnosisRepository;
 import mk.ukim.finki.uikt.biolense.backendbiolense.repositories.IdentificationHistoryRepository;
@@ -64,8 +65,12 @@ public class CropDiagnosisServiceImpl implements CropDiagnosisService {
     }
 
     @Override
-    public List<DiagnosisResponseDto> findAll() {
-        return DiagnosisResponseDto.from(diagnosisRepository.findAll());
+    public List<DiagnosisResponseDto> findAllByUserId(User user) {
+        return DiagnosisResponseDto.from(
+                diagnosisRepository.findAll().stream()
+                        .filter(x -> x.getCrop().getUser().getId().equals(user.getId()))
+                        .toList()
+        );
     }
 
     @Override

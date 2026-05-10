@@ -55,21 +55,16 @@ public class JwtSecurityWebConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(corsCustomizer ->
                         corsCustomizer.configurationSource(corsConfigurationSource())
-                )
-                .authorizeHttpRequests(authorizeHttpRequestsCustomizer ->
-                        authorizeHttpRequestsCustomizer
-                                .requestMatchers(
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs/**",
-                                        "/api/user/register",
-                                        "/api/user/login",
-                                        "/api/**"
-                                )
-                                .permitAll()
-                                .anyRequest()
-                                .permitAll()
-                )
-                .sessionManagement(sessionManagementConfigurer ->
+                ).authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/api/users/register",
+                        "/api/users/login"
+                ).permitAll()
+                .requestMatchers("/api/**").authenticated()
+                .anyRequest().authenticated()
+        ).sessionManagement(sessionManagementConfigurer ->
                         sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))

@@ -37,19 +37,15 @@ public class DataInitializer {
     public void init(){
 
          // --- Users ---
+        User admin = new User(
+                "admin@biolense.mk",
+                passwordEncoder.encode("Admin@123"),
+                "Ana", "Kovachevska",
+                "BioLense Admin",
+                UserRole.ADMIN
+        );
+        userRepository.save(admin);
 
-        if (userRepository.findByEmail("admin@biolense.mk").isEmpty()) {
-            User admin = new User(
-                    "admin@biolense.mk",
-                    passwordEncoder.encode("Admin@123"),
-                    "Bio", "Admin",
-                    "BioLense Admin",
-                    UserRole.ADMIN
-            );
-            userRepository.save(admin);
-        }
-//
-//
 //        User farmer1 = new User(
 //                "petar.petrov@farm.mk",
 //                passwordEncoder.encode("Farmer@123"),

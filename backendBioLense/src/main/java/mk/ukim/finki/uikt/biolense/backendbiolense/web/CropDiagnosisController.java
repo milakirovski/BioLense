@@ -8,10 +8,12 @@ import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.Diagnos
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.IdHistoryResponseDto;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantIdResponse;
 import mk.ukim.finki.uikt.biolense.backendbiolense.dtos.plantId.response.PlantIdUsageResponse;
+import mk.ukim.finki.uikt.biolense.backendbiolense.models.User;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.CropDiagnosisService;
 import mk.ukim.finki.uikt.biolense.backendbiolense.service.application.PlantIdClientService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -72,8 +74,8 @@ public class CropDiagnosisController {
 
     @GetMapping("/diagnoses")
     @Operation(summary = "List all crop diagnoses")
-    public ResponseEntity<List<DiagnosisResponseDto>> findAllDiagnoses() {
-        return ResponseEntity.ok(cropDiagnosisService.findAll());
+    public ResponseEntity<List<DiagnosisResponseDto>> findAllDiagnoses(@AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(cropDiagnosisService.findAllByUserId(currentUser));
     }
 
     @GetMapping("/{cropId}/diagnoses")
