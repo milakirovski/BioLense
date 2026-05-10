@@ -2,6 +2,7 @@ package mk.ukim.finki.uikt.biolense.backendbiolense.config.security;
 
 import mk.ukim.finki.uikt.biolense.backendbiolense.security.CustomUsernamePasswordAuthenticationProvider;
 import mk.ukim.finki.uikt.biolense.backendbiolense.web.filter.JwtFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,11 +30,19 @@ public class JwtSecurityWebConfig {
         this.jwtFilter = jwtFilter;
     }
 
+    @Value("${app.cors.allowed-origins}")
+    private String productionOrigin;
+
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:4200"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        corsConfiguration.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "http://localhost:4200",
+                productionOrigin
+        ));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
