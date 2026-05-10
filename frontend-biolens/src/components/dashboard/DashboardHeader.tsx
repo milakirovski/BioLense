@@ -21,7 +21,7 @@ export const DashboardHeader = ({
         {getGreeting()}, {userName}
       </Heading>
       <Text color="gray.500" fontSize="sm" mt="1">
-        Here's what's happening on your farm today — {today}
+        Here's what's happening on your farm today - {today}
       </Text>
     </Box>
   );

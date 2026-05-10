@@ -9,7 +9,7 @@ interface DiseaseStatsCardProps {
 export const DiseaseStatsCard = ({ data }: DiseaseStatsCardProps) => {
     const allDiseases = data
         .map(item => item.disease)
-        .filter(d => d !== "—")
+        .filter(d => d !== "-")
 
     const diseaseCounts = allDiseases.reduce((acc: Record<string, number>, disease) => {
         acc[disease] = (acc[disease] || 0) + 1

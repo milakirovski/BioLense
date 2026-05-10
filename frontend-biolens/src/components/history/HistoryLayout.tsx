@@ -9,16 +9,16 @@ import type { HistoryItem } from '@/components/history/HistoryTable'
 
 const HISTORY_DATA: HistoryItem[] = [
   { id:  1, plant: 'Tomato',    field: 'Field A', disease: 'Early Blight',    conf: 94, date: 'Today, 09:14',     status: 'Diseased' },
-  { id:  2, plant: 'Corn',      field: 'Field B', disease: '—',               conf: 98, date: 'Yesterday, 14:30', status: 'Healthy'  },
+  { id:  2, plant: 'Corn',      field: 'Field B', disease: '-',               conf: 98, date: 'Yesterday, 14:30', status: 'Healthy'  },
   { id:  3, plant: 'Grape',     field: 'Field C', disease: 'Powdery Mildew',  conf: 89, date: 'Mar 17, 11:00',    status: 'Diseased' },
   { id:  4, plant: 'Wheat',     field: 'Field B', disease: 'Brown Rust',      conf: 91, date: 'Mar 15, 08:45',    status: 'Moderate' },
-  { id:  5, plant: 'Soybeans',  field: 'Field D', disease: '—',               conf: 97, date: 'Mar 14, 15:20',    status: 'Healthy'  },
+  { id:  5, plant: 'Soybeans',  field: 'Field D', disease: '-',               conf: 97, date: 'Mar 14, 15:20',    status: 'Healthy'  },
   { id:  6, plant: 'Tomato',    field: 'Field A', disease: 'Late Blight',     conf: 86, date: 'Mar 12, 10:30',    status: 'Diseased' },
   { id:  7, plant: 'Sunflower', field: 'Field E', disease: 'Downy Mildew',    conf: 78, date: 'Mar 11, 08:00',    status: 'Diseased' },
-  { id:  8, plant: 'Pepper',    field: 'Field C', disease: '—',               conf: 95, date: 'Mar 10, 13:45',    status: 'Healthy'  },
+  { id:  8, plant: 'Pepper',    field: 'Field C', disease: '-',               conf: 95, date: 'Mar 10, 13:45',    status: 'Healthy'  },
   { id:  9, plant: 'Potato',    field: 'Field A', disease: 'Black Scurf',     conf: 83, date: 'Mar 9, 10:20',     status: 'Diseased' },
   { id: 10, plant: 'Barley',    field: 'Field B', disease: 'Leaf Stripe',     conf: 76, date: 'Mar 8, 09:00',     status: 'Moderate' },
-  { id: 11, plant: 'Soybean',   field: 'Field D', disease: '—',               conf: 99, date: 'Mar 7, 15:30',     status: 'Healthy'  },
+  { id: 11, plant: 'Soybean',   field: 'Field D', disease: '-',               conf: 99, date: 'Mar 7, 15:30',     status: 'Healthy'  },
   { id: 12, plant: 'Maize',     field: 'Field E', disease: 'Northern Blight', conf: 88, date: 'Mar 6, 11:10',     status: 'Diseased' },
 ]
 
