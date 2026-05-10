@@ -42,6 +42,7 @@ RUN apk add --no-cache openjdk17-jre
 ENV NODE_ENV=production
 ENV BACKEND_PORT=8080
 ENV FRONTEND_PORT=3000
+ENV SPRING_PROFILES_ACTIVE=prod
 
 COPY --from=backend-build /backend/target/*.jar /app/backend.jar
 
