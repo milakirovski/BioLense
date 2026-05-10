@@ -5,7 +5,7 @@ import type { Task } from '@/types'
 
 const INITIAL_TASKS: Task[] = [
   { id: 1, label: 'Apply fungicide on Field A',  due: 'Done',   completed: true  },
-  { id: 2, label: 'Scan grapes — Field C',        due: 'Today',  completed: false },
+  { id: 2, label: 'Scan grapes - Field C',        due: 'Today',  completed: false },
   { id: 3, label: 'Water Field D (if no rain)',   due: 'Sat',    completed: false },
   { id: 4, label: 'Export monthly report',        due: 'Mar 31', completed: false },
 ]

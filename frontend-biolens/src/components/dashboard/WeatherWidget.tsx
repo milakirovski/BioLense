@@ -44,7 +44,7 @@ export const WeatherWidget = ({ weather, isLoading, cropCount }: WeatherWidgetPr
       <Flex justify="space-between" align="flex-start" gap="6">
         <VStack align="center" gap="3" flex="1">
           <Text fontSize="xs" fontWeight="medium" color="green.200">
-            Today — Skopje
+            Today - Skopje
           </Text>
 
           <HStack gap="3" align="center">

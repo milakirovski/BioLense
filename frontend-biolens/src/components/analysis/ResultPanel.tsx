@@ -11,7 +11,7 @@ interface ResultPanelProps {
 }
 
 function formatWhen(value?: string) {
-  if (!value) return '—'
+  if (!value) return '-'
   const date = new Date(value)
   return Number.isNaN(date.getTime())
     ? '—'
@@ -67,10 +67,10 @@ export const ResultPanel = ({ analysis, previewUrl, onSaveToHistory, isSaving }:
       </Box>
 
       <VStack align="stretch" gap="2" fontSize="sm">
-        <DataRow label="Plant" value={analysis?.plantName ?? '—'} />
-        <DataRow label="Disease" value={`${analysis?.diseaseName ?? '—'} (${analysis?.stage ?? '—'})`} />
-        <DataRow label="Severity" value={analysis?.severity ?? '—'} />
-        <DataRow label="Field" value={analysis?.fieldLabel ?? '—'} />
+        <DataRow label="Plant" value={analysis?.plantName ?? '-'} />
+        <DataRow label="Disease" value={`${analysis?.diseaseName ?? '-'} (${analysis?.stage ?? '-'})`} />
+        <DataRow label="Severity" value={analysis?.severity ?? '-'} />
+        <DataRow label="Field" value={analysis?.fieldLabel ?? '-'} />
         <DataRow label="Scanned" value={formatWhen(analysis?.scannedAt)} />
       </VStack>
 
