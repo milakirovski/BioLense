@@ -4,10 +4,10 @@ import { getActivityDotColor } from '@/utils/dashboard'
 import type { Activity } from '@/types'
 
 const ACTIVITIES: Activity[] = [
-  { id: 1, text: 'Early Blight detected on Tomato — Field A',     time: 'Today, 09:14',     type: 'error'   },
+  { id: 1, text: 'Early Blight detected on Tomato - Field A',     time: 'Today, 09:14',     type: 'error'   },
   { id: 2, text: 'Fungicide applied on Field A',                   time: 'Today, 08:00',     type: 'success' },
   { id: 3, text: 'Corn scan - Healthy on Field B',                 time: 'Yesterday, 14:30', type: 'success' },
-  { id: 4, text: 'Powdery Mildew — treatment pending on Field C',  time: 'Mar 17, 11:00',    type: 'warning' },
+  { id: 4, text: 'Powdery Mildew - treatment pending on Field C',  time: 'Mar 17, 11:00',    type: 'warning' },
 ]
 
 export const RecentActivity = () => (

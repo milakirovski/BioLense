@@ -140,7 +140,7 @@ export const HistoryTable = ({ data }: HistoryTableProps) => {
                   <StatusBadge status={item.status} />
                 </HStack>
 
-                {item.disease !== '—' && (
+                {item.disease !== '-' && (
                   <Text fontSize="sm" color="gray.600" mb="2">{item.disease}</Text>
                 )}
 

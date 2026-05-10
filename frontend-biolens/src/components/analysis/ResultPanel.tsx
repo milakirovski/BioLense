@@ -38,7 +38,7 @@ export const ResultPanel = ({ analysis, previewUrl, onSaveToHistory, isSaving }:
       <HStack justify="space-between">
         <Text color="white" fontWeight="bold">
           {analysis?.plantName ?? 'Waiting for analysis'}
-          {' — '}
+          {' - '}
           {analysis?.diseaseName ?? 'No result yet'}
         </Text>
         <Badge colorPalette="whiteAlpha" borderRadius="full">
