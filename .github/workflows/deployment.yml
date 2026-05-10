@@ -28,8 +28,10 @@ jobs:
               --name spring-app \
               -p 8080:8080 \
               -p 80:3000 \
+              -e ALLOWED_ORIGINS="$ALLOWED_ORIGINS" \
               spring-app
             echo "Cleanup..."
             docker image prune -f
         env:
           BACKEND_URL: ${{ secrets.BACKEND_URL }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
