@@ -12,7 +12,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          envs: BACKEND_URL, ALLOWED_ORIGINS
+          envs: BACKEND_URL, ALLOWED_ORIGINS, DB_HOST, DB_USERNAME, DB_PASSWORD
           script: |
             set -e
             cd ~/apps/Biolense
@@ -28,10 +28,17 @@ jobs:
               --name spring-app \
               -p 8080:8080 \
               -p 80:3000 \
+              -e SPRING_PROFILES_ACTIVE=prod \
               -e ALLOWED_ORIGINS="$ALLOWED_ORIGINS" \
+              -e DB_HOST="$DB_HOST" \
+              -e DB_USERNAME="$DB_USERNAME" \
+              -e DB_PASSWORD="$DB_PASSWORD" \
               spring-app
             echo "Cleanup..."
             docker image prune -f
         env:
           BACKEND_URL: ${{ secrets.BACKEND_URL }}
           ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
