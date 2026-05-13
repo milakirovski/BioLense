@@ -24,9 +24,9 @@ export const CropHealthScore = ({ crops, diagnoses }: CropHealthScoreProps) => {
     score: computeHealthScore(c, diagnoses),
   }))
 
-  if (fields.length === 0) return null
-
-  const overallHealth = Math.round(fields.reduce((sum, f) => sum + f.score, 0) / fields.length)
+  const overallHealth = fields.length === 0
+    ? 0
+    : Math.round(fields.reduce((sum, f) => sum + f.score, 0) / fields.length)
   const healthyFields = fields.filter((f) => f.score >= 80).length
 
   return (
@@ -68,28 +68,34 @@ export const CropHealthScore = ({ crops, diagnoses }: CropHealthScoreProps) => {
 
         <VStack gap="0.5" textAlign="center">
           <Text fontWeight="bold" fontSize="sm">Farm Health</Text>
-          <Text fontSize="xs" color="gray.500">
-            {healthyFields} of {fields.length} fields in good condition
-          </Text>
+          {fields.length > 0 && (
+            <Text fontSize="xs" color="gray.500">
+              {healthyFields} of {fields.length} fields in good condition
+            </Text>
+          )}
         </VStack>
 
-        <VStack gap="2.5" align="stretch" w="full">
-          {fields.map((f) => {
-            const color = getFieldHealthColor(f.score)
-            return (
-              <HStack key={f.name} gap="2">
-                <Box w="2" h="2" borderRadius="full" bg={`${color}.400`} flexShrink={0} />
-                <Text fontSize="xs" color="gray.600" flexShrink={0} w="24">{f.name}</Text>
-                <Box flex="1" minW="8" h="1.5" bg="gray.100" borderRadius="full" overflow="hidden">
-                  <Box w={`${f.score}%`} h="full" bg={`${color}.500`} borderRadius="full" />
-                </Box>
-                <Text fontSize="xs" fontWeight="bold" color="gray.600" w="8" textAlign="right" flexShrink={0}>
-                  {f.score}%
-                </Text>
-              </HStack>
-            )
-          })}
-        </VStack>
+        {fields.length === 0 ? (
+          <Text fontSize="sm" color="gray.400" textAlign="center">No crops yet. Add a crop to see health scores.</Text>
+        ) : (
+          <VStack gap="2.5" align="stretch" w="full">
+            {fields.map((f) => {
+              const color = getFieldHealthColor(f.score)
+              return (
+                <HStack key={f.name} gap="2">
+                  <Box w="2" h="2" borderRadius="full" bg={`${color}.400`} flexShrink={0} />
+                  <Text fontSize="xs" color="gray.600" flexShrink={0} w="24">{f.name}</Text>
+                  <Box flex="1" minW="8" h="1.5" bg="gray.100" borderRadius="full" overflow="hidden">
+                    <Box w={`${f.score}%`} h="full" bg={`${color}.500`} borderRadius="full" />
+                  </Box>
+                  <Text fontSize="xs" fontWeight="bold" color="gray.600" w="8" textAlign="right" flexShrink={0}>
+                    {f.score}%
+                  </Text>
+                </HStack>
+              )
+            })}
+          </VStack>
+        )}
       </VStack>
     </Box>
   )

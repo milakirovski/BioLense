@@ -1,5 +1,6 @@
 package mk.ukim.finki.uikt.biolense.backendbiolense.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -62,9 +63,11 @@ public class Crop {
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
 
+    @JsonIgnore
     @OneToMany(mappedBy = "crop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Diagnosis> diagnoses = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "crop", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<IdentificationHistory> identificationHistories = new ArrayList<>();
 

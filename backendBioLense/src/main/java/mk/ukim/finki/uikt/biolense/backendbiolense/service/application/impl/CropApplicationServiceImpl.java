@@ -22,13 +22,13 @@ public class CropApplicationServiceImpl implements CropApplicationService {
     }
 
     @Override
-    public List<ResponseCropDto> findAll() {
-        return ResponseCropDto.from(cropService.findAll());
+    public List<ResponseCropDto> findAllByUser(User user) {
+        return ResponseCropDto.from(cropService.findAllByUser(user));
     }
 
     @Override
-    public ResponseCropDto findById(Long id) {
-        return ResponseCropDto.from(cropService.findById(id));
+    public ResponseCropDto findById(Long id, User user) {
+        return ResponseCropDto.from(cropService.findById(id, user));
     }
 
     @Override
@@ -37,33 +37,33 @@ public class CropApplicationServiceImpl implements CropApplicationService {
     }
 
     @Override
-    public ResponseCropDto update(Long cropId, UpdateRequestCropDto updateRequestCropDto) {
-        return ResponseCropDto.from(cropService.update(cropId, updateRequestCropDto));
+    public ResponseCropDto update(Long cropId, UpdateRequestCropDto updateRequestCropDto, User user) {
+        return ResponseCropDto.from(cropService.update(cropId, updateRequestCropDto, user));
     }
 
     @Override
-    public void delete(Long id) {
-        cropService.delete(id);
+    public void delete(Long id, User user) {
+        cropService.delete(id, user);
     }
 
     @Override
-    public List<ResponseCropDto> findByStatus(String status) {
-        return ResponseCropDto.from(cropService.findByStatus(status));
+    public List<ResponseCropDto> findByStatus(String status, User user) {
+        return ResponseCropDto.from(cropService.findByStatus(status, user));
     }
 
     @Override
     public List<ResponseCropDto> filter(String plantType, String fieldName, CropStatus status,
                                         LocalDate plantedAtFrom, LocalDate plantedAtTo,
                                         LocalDate expectedHarvestAtFrom, LocalDate expectedHarvestAtTo,
-                                        LocalDate harvestedAtFrom, LocalDate harvestedAtTo) {
+                                        LocalDate harvestedAtFrom, LocalDate harvestedAtTo, User user) {
         return ResponseCropDto.from(cropService.filter(plantType, fieldName, status,
                 plantedAtFrom, plantedAtTo,
                 expectedHarvestAtFrom, expectedHarvestAtTo,
-                harvestedAtFrom, harvestedAtTo));
+                harvestedAtFrom, harvestedAtTo, user));
     }
 
     @Override
-    public ResponseCropDto logCropHarvest(Long cropId) {
-        return ResponseCropDto.from(cropService.logCropHarvest(cropId));
+    public ResponseCropDto logCropHarvest(Long cropId, User user) {
+        return ResponseCropDto.from(cropService.logCropHarvest(cropId, user));
     }
 }

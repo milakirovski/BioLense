@@ -9,6 +9,7 @@ public record DiagnosisResponseDto(
         Long id,
         Long cropId,
         String plantName,
+        String fieldName,
         String diseaseName,
         Double confidence,
         Boolean isHealthy,
@@ -17,12 +18,14 @@ public record DiagnosisResponseDto(
 ) {
 
     public static DiagnosisResponseDto from(Diagnosis diagnosis) {
+        Double rawConf = diagnosis.getConfidence();
         return new DiagnosisResponseDto(
                 diagnosis.getId(),
                 diagnosis.getCrop().getId(),
                 diagnosis.getPlantName(),
+                diagnosis.getCrop().getFieldName(),
                 diagnosis.getDiseaseName(),
-                diagnosis.getConfidence(),
+                rawConf != null ? Math.round(rawConf * 100.0) / 100.0 * 100 : null,
                 diagnosis.getIsHealthy(),
                 diagnosis.getTreatment(),
                 diagnosis.getDiagnosedAt()

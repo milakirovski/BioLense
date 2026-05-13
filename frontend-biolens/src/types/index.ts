@@ -26,6 +26,24 @@ export interface Field {
   score: number
 }
 
+export interface FieldEntity {
+  id: number
+  name: string
+  description?: string
+  plantedCrop?: Crop | null
+}
+
+export interface CreateFieldPayload {
+  name: string
+  description?: string
+}
+
+export interface UpdateFieldPayload {
+  name?: string
+  description?: string
+  plantedCrop?: { id: number } | null
+}
+
 // ─── Activity ────────────────────────────────────────────────────────────────
 
 export type ActivityType = 'error' | 'success' | 'warning'

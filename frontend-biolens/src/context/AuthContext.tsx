@@ -24,6 +24,8 @@ export interface UpdateProfilePayload {
   firstName?: string
   lastName?: string
   farmName?: string
+  email?: string
+  password?: string
 }
 
 interface AuthContextType {
@@ -38,12 +40,19 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-function applyToken(token: string | null) {
-  if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-  } else {
-    delete axios.defaults.headers.common['Authorization']
-  }
+function applyToken(token: string) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+}
+
+function clearToken() {
+  delete axios.defaults.headers.common['Authorization']
+}
+
+// Runs synchronously at module-import time on the client — before any
+// React effect fires — so the token is present on the very first request.
+if (typeof window !== 'undefined') {
+  const stored = localStorage.getItem('token')
+  if (stored) applyToken(stored)
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -52,10 +61,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    // Keep the interceptor as a belt-and-suspenders for edge cases
+    // (e.g. token written to localStorage by another tab).
+    // No cleanup/eject so it survives StrictMode unmount/remount.
+    axios.interceptors.request.use((config) => {
+      const stored = localStorage.getItem('token')
+      if (stored) config.headers.set('Authorization', `Bearer ${stored}`)
+      return config
+    })
+
     const storedToken = localStorage.getItem('token')
     const storedUser = localStorage.getItem('user')
     if (storedToken && storedUser) {
-      applyToken(storedToken)
       setToken(storedToken)
       setUser(JSON.parse(storedUser) as User)
     }
@@ -64,11 +81,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     const { data } = await axios.post<{ token: string }>(routes.users.login, { email, password })
+    localStorage.setItem('token', data.token)
     applyToken(data.token)
     const { data: userData } = await axios.get<User>(routes.users.findByEmail, { params: { email } })
     setToken(data.token)
     setUser(userData)
-    localStorage.setItem('token', data.token)
     localStorage.setItem('user', JSON.stringify(userData))
   }, [])
 
@@ -77,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const logout = useCallback(() => {
-    applyToken(null)
+    clearToken()
     setToken(null)
     setUser(null)
     localStorage.removeItem('token')
@@ -86,10 +103,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateProfile = useCallback(
     async (payload: UpdateProfilePayload) => {
+      const { password: _pw, ...userFields } = payload
       await axios.put(routes.users.profile, payload)
       setUser((prev) => {
         if (!prev) return prev
-        const updated = { ...prev, ...payload }
+        const updated = { ...prev, ...userFields }
         localStorage.setItem('user', JSON.stringify(updated))
         return updated
       })

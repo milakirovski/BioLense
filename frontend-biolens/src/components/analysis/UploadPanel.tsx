@@ -1,16 +1,20 @@
 'use client'
-import { Box, Button, Image, Input, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, Image, Input, NativeSelectField, NativeSelectIndicator, NativeSelectRoot, Text, VStack } from '@chakra-ui/react'
 import { FiImage } from 'react-icons/fi'
 import type { ChangeEvent } from 'react'
+import type { FieldEntity } from '@/types'
 
 interface UploadPanelProps {
   previewUrl: string
   onFileChange: (event: ChangeEvent<HTMLInputElement>) => void
   onAnalyze: () => void
   isAnalyzing: boolean
+  fields: FieldEntity[]
+  selectedFieldId: number | null
+  onFieldChange: (id: number | null) => void
 }
 
-export const UploadPanel = ({ previewUrl, onFileChange, onAnalyze, isAnalyzing }: UploadPanelProps) => (
+export const UploadPanel = ({ previewUrl, onFileChange, onAnalyze, isAnalyzing, fields, selectedFieldId, onFieldChange }: UploadPanelProps) => (
   <VStack align="stretch" gap="5" h="full">
     <Box
       flex="1"
@@ -100,11 +104,29 @@ export const UploadPanel = ({ previewUrl, onFileChange, onAnalyze, isAnalyzing }
           )}
         </Box>
 
+        <Box>
+          <Text fontSize="sm" fontWeight="medium" mb="1.5" color="gray.600">Field</Text>
+          <NativeSelectRoot>
+            <NativeSelectField
+              value={selectedFieldId ?? ''}
+              onChange={(e) => onFieldChange(e.target.value ? Number(e.target.value) : null)}
+              borderColor="gray.200"
+              bg="white"
+            >
+              <option value=""></option>
+              {fields.filter((f) => !f.plantedCrop).map((f) => (
+                <option key={f.id} value={f.id}>{f.name}</option>
+              ))}
+            </NativeSelectField>
+            <NativeSelectIndicator />
+          </NativeSelectRoot>
+        </Box>
+
         <Button
           colorPalette="green"
           onClick={onAnalyze}
           loading={isAnalyzing}
-          disabled={!previewUrl}
+          disabled={!previewUrl || !selectedFieldId}
         >
           Analyze
         </Button>

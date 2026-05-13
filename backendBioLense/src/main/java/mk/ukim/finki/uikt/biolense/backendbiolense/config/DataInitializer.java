@@ -36,20 +36,18 @@ public class DataInitializer {
     @PostConstruct
     public void init(){
 
-         // --- Users ---
-
-        if (userRepository.findByEmail("admin@biolense.mk").isEmpty()) {
+        // --- Users ---
+        if (!userRepository.existsByEmail("admin@biolense.mk")) {
             User admin = new User(
                     "admin@biolense.mk",
                     passwordEncoder.encode("Admin@123"),
-                    "Bio", "Admin",
+                    "Ana", "Kovachevska",
                     "BioLense Admin",
                     UserRole.ADMIN
             );
             userRepository.save(admin);
         }
-//
-//
+
 //        User farmer1 = new User(
 //                "petar.petrov@farm.mk",
 //                passwordEncoder.encode("Farmer@123"),

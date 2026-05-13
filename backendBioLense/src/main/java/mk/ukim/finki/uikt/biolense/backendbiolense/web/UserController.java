@@ -91,7 +91,7 @@ public class UserController {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session. No user is logged in yet.");
         }
-        return ResponseEntity.ok(userApplicationService.updateProfile(currentUser.getEmail(), dto));
+        return ResponseEntity.ok(userApplicationService.updateProfile(currentUser, dto));
     }
 
     @DeleteMapping("/profile")

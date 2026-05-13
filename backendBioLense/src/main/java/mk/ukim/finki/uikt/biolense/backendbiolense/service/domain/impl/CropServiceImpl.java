@@ -26,13 +26,13 @@ public class CropServiceImpl implements CropService {
     }
 
     @Override
-    public List<Crop> findAll() {
-        return cropRepository.findAll();
+    public List<Crop> findAllByUser(User user) {
+        return cropRepository.findAllByUserId(user.getId());
     }
 
     @Override
-    public Crop findById(Long id) throws CropNotFoundException{
-        return cropRepository.findById(id).orElseThrow(CropNotFoundException::new);
+    public Crop findById(Long id, User user) throws CropNotFoundException{
+        return cropRepository.findByIdAndUserId(id, user.getId()).orElseThrow(CropNotFoundException::new);
     }
 
     @Override
@@ -45,8 +45,8 @@ public class CropServiceImpl implements CropService {
     }
 
     @Override
-    public Crop update(Long cropId, UpdateRequestCropDto updateRequestCropDto) throws CropNotFoundException{
-        Crop crop = findById(cropId);
+    public Crop update(Long cropId, UpdateRequestCropDto updateRequestCropDto, User user) throws CropNotFoundException{
+        Crop crop = findById(cropId, user);
         if(updateRequestCropDto.areaHectares() != null) crop.setAreaHectares(updateRequestCropDto.areaHectares());
         if(updateRequestCropDto.yieldKgPerHa() != null) crop.setYieldKgPerHa(updateRequestCropDto.yieldKgPerHa());
         if(updateRequestCropDto.expectedHarvestAt() != null) crop.setExpectedHarvestAt(updateRequestCropDto.expectedHarvestAt());
@@ -58,21 +58,21 @@ public class CropServiceImpl implements CropService {
     }
 
     @Override
-    public void delete(Long cropId) throws CropNotFoundException{
-        findById(cropId);
+    public void delete(Long cropId, User user) throws CropNotFoundException{
+        findById(cropId, user);
         cropRepository.deleteById(cropId);
     }
 
     @Override
-    public List<Crop> findByStatus(String status) {
-        return findAll().stream().filter(crop -> crop.getStatus().name().equals(status)).toList();
+    public List<Crop> findByStatus(String status, User user) {
+        return cropRepository.findAllByUserIdAndStatus(user.getId(), CropStatus.valueOf(status));
     }
 
     @Override
     public List<Crop> filter(String plantType, String fieldName, CropStatus status,
                              LocalDate plantedAtFrom, LocalDate plantedAtTo,
                              LocalDate expectedHarvestAtFrom, LocalDate expectedHarvestAtTo,
-                             LocalDate harvestedAtFrom, LocalDate harvestedAtTo) {
+                             LocalDate harvestedAtFrom, LocalDate harvestedAtTo, User user) {
         Specification<Crop> spec = Specification
                 .where(CropSpecification.hasPlantType(plantType))
                 .and(CropSpecification.hasFieldName(fieldName))
@@ -87,8 +87,8 @@ public class CropServiceImpl implements CropService {
     }
 
     @Override
-    public Crop logCropHarvest(Long cropId) {
-        Crop crop = findById(cropId);
+    public Crop logCropHarvest(Long cropId, User user) {
+        Crop crop = findById(cropId, user);
         if(crop.getStatus().equals(CropStatus.HARVESTED)) throw new CropIsAlreadyHarvestedException();
         crop.setStatus(CropStatus.HARVESTED);
         return cropRepository.save(crop);
