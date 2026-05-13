@@ -67,11 +67,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateProfile(String email, UpdateProfileRequestDto dto) {
-        User user = userRepository.findWithCropsByEmail(email).orElseThrow(() -> new UserAccountDoesntExist(email));
+    public User updateProfile(User user, UpdateProfileRequestDto dto) {
         if (dto.firstName() != null) user.setFirstName(dto.firstName());
         if (dto.lastName() != null) user.setLastName(dto.lastName());
         if (dto.farmName() != null) user.setFarmName(dto.farmName());
+        if (dto.email() != null) user.setEmail(dto.email());
+        if (dto.password() != null) user.setPasswordHash(passwordEncoder.encode(dto.password()));
         return userRepository.save(user);
     }
 

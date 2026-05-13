@@ -17,7 +17,7 @@ public interface UserService extends UserDetailsService {
     User findUserByEmail(String email);
 
     // update user information = user only
-    User updateProfile(String email, UpdateProfileRequestDto dto);
+    User updateProfile(User user, UpdateProfileRequestDto dto);
 
     // delete account = user only
     void deleteAccount(String email);

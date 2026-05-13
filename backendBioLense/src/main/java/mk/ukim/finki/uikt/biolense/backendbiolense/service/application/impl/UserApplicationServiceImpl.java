@@ -56,8 +56,8 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     }
 
     @Override
-    public DisplayUserDto updateProfile(String email, UpdateProfileRequestDto dto) {
-        return DisplayUserDto.from(userService.updateProfile(email, dto));
+    public DisplayUserDto updateProfile(User user, UpdateProfileRequestDto dto) {
+        return DisplayUserDto.from(userService.updateProfile(user, dto));
     }
 
     @Override
