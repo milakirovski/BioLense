@@ -1,10 +1,10 @@
-import { AnalysisLayout } from '@/components/analysis/AnalysisLayout'
+import { FieldsLayout } from '@/components/fields/FieldsLayout'
 import { AuthGuard } from '@/components/shared/AuthGuard'
 
 export default function Page() {
   return (
     <AuthGuard>
-      <AnalysisLayout />
+      <FieldsLayout />
     </AuthGuard>
   )
 }

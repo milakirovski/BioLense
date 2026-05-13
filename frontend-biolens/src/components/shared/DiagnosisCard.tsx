@@ -18,7 +18,7 @@ export const DiagnosisCard = ({ diagnosis }: DiagnosisCardProps) => {
   const badgeLabel = diagnosis.isHealthy
     ? "Healthy"
     : (diagnosis.diseaseName ?? "Diseased");
-  const fieldLabel = diagnosis.fieldName ?? `Field ${diagnosis.cropId}`;
+  const fieldLabel = diagnosis.fieldName ?? '—';
 
   return (
     <HStack

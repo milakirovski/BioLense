@@ -13,9 +13,9 @@ const ACTIONS = [
   },
   {
     icon: FiPlus,
-    title: "Add crop",
-    description: "Register a crop",
-    href: "/analysis",
+    title: "Add field",
+    description: "Manage your fields",
+    href: "/fields",
   },
   {
     icon: FiBarChart2,

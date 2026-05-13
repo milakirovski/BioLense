@@ -1,61 +1,90 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Box, SimpleGrid, HStack, Text, Button, Flex, VStack } from '@chakra-ui/react'
+import type { HistoryItem } from '@/components/history/HistoryTable'
 
 type TimeFilter = 'Week' | 'Month' | 'Year'
 
 interface HealthOverviewChartsProps {
-    data: any[]
+    data: HistoryItem[]
 }
 
-const SCAN_DATA: Record<TimeFilter, { label: string; healthy: number; diseased: number }[]> = {
-    Week: [
-        { label: 'Mon', healthy: 20, diseased: 10 },
-        { label: 'Tue', healthy: 35, diseased: 15 },
-        { label: 'Wed', healthy: 50, diseased: 20 },
-        { label: 'Thu', healthy: 30, diseased: 25 },
-        { label: 'Fri', healthy: 65, diseased: 18 },
-        { label: 'Sat', healthy: 45, diseased: 12 },
-        { label: 'Sun', healthy: 25, diseased: 8 },
-    ],
-    Month: [
-        { label: 'W1', healthy: 40, diseased: 20 },
-        { label: 'W2', healthy: 70, diseased: 25 },
-        { label: 'W3', healthy: 85, diseased: 30 },
-        { label: 'W4', healthy: 100, diseased: 40 },
-    ],
-    Year: [
-        { label: 'Jan', healthy: 30, diseased: 15 },
-        { label: 'Feb', healthy: 45, diseased: 20 },
-        { label: 'Mar', healthy: 60, diseased: 25 },
-        { label: 'Apr', healthy: 80, diseased: 30 },
-        { label: 'May', healthy: 95, diseased: 35 },
-        { label: 'Jun', healthy: 100, diseased: 40 },
-        { label: 'Jul', healthy: 90, diseased: 38 },
-        { label: 'Aug', healthy: 75, diseased: 30 },
-        { label: 'Sep', healthy: 65, diseased: 25 },
-        { label: 'Oct', healthy: 55, diseased: 20 },
-        { label: 'Nov', healthy: 40, diseased: 15 },
-        { label: 'Dec', healthy: 30, diseased: 10 },
-    ],
+type ScanBucket = { label: string; healthy: number; diseased: number }
+
+function computeScanData(data: HistoryItem[], filter: TimeFilter): ScanBucket[] {
+    const now = new Date()
+    const DAY_MS = 24 * 60 * 60 * 1000
+
+    if (filter === 'Week') {
+        const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        return Array.from({ length: 7 }, (_, i) => {
+            const d = new Date(now)
+            d.setDate(d.getDate() - (6 - i))
+            const start = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+            const end = start + DAY_MS
+            const bucket = data.filter((item) => {
+                const t = new Date(item.rawDate).getTime()
+                return t >= start && t < end
+            })
+            return {
+                label: DAY_LABELS[d.getDay()],
+                healthy: bucket.filter((x) => x.status === 'Healthy').length,
+                diseased: bucket.filter((x) => x.status === 'Diseased').length,
+            }
+        })
+    }
+
+    if (filter === 'Month') {
+        return Array.from({ length: 4 }, (_, i) => {
+            const weekEnd = new Date(now.getTime() - (3 - i) * 7 * DAY_MS)
+            const weekStart = new Date(weekEnd.getTime() - 7 * DAY_MS)
+            const bucket = data.filter((item) => {
+                const t = new Date(item.rawDate).getTime()
+                return t >= weekStart.getTime() && t < weekEnd.getTime()
+            })
+            return {
+                label: `W${i + 1}`,
+                healthy: bucket.filter((x) => x.status === 'Healthy').length,
+                diseased: bucket.filter((x) => x.status === 'Diseased').length,
+            }
+        })
+    }
+
+    // Year
+    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    const year = now.getFullYear()
+    return MONTHS.map((label, month) => {
+        const bucket = data.filter((item) => {
+            const d = new Date(item.rawDate)
+            return d.getFullYear() === year && d.getMonth() === month
+        })
+        return {
+            label,
+            healthy: bucket.filter((x) => x.status === 'Healthy').length,
+            diseased: bucket.filter((x) => x.status === 'Diseased').length,
+        }
+    })
 }
 
 export const HealthOverviewCharts = ({ data }: HealthOverviewChartsProps) => {
     const [timeFilter, setTimeFilter] = useState<TimeFilter>('Month')
 
-    const total = data.length || 1
-    const healthyPct = Math.round((data.filter(d => d.status === 'Healthy').length / total) * 100)
-    const diseasedPct = Math.round((data.filter(d => d.status === 'Diseased').length / total) * 100)
-    const moderatePct = 100 - healthyPct - diseasedPct
+    const total = data.length
+    const healthyCount = data.filter(d => d.status === 'Healthy').length
+    const diseasedCount = data.filter(d => d.status === 'Diseased').length
+    const healthyPct = total === 0 ? 0 : Math.round((healthyCount / total) * 100)
+    const diseasedPct = total === 0 ? 0 : Math.round((diseasedCount / total) * 100)
 
-    const gradient = `conic-gradient(
-    #2D6A4F 0% ${healthyPct}%,
-    #F87171 ${healthyPct}% ${healthyPct + diseasedPct}%,
-    #FBBF24 ${healthyPct + diseasedPct}% 100%
-  )`
+    const gradient = data.length === 0
+        ? '#E5E7EB'
+        : `conic-gradient(#2D6A4F 0% ${healthyPct}%, #F87171 ${healthyPct}% 100%)`
 
-    const scanStats = SCAN_DATA[timeFilter]
+    const scanStats = useMemo(() => computeScanData(data, timeFilter), [data, timeFilter])
+    const maxCount = useMemo(
+        () => Math.max(...scanStats.flatMap((s) => [s.healthy, s.diseased]), 1),
+        [scanStats],
+    )
 
     return (
         <SimpleGrid columns={{ base: 1, lg: 2 }} gap="6">
@@ -77,13 +106,15 @@ export const HealthOverviewCharts = ({ data }: HealthOverviewChartsProps) => {
                         ))}
                     </HStack>
                 </HStack>
-                <HStack align="flex-end" height="150px" gap="2" justify="space-between" px="2">
+                <HStack align="flex-end" height="150px" gap="2" justify="space-between" px="2" overflow="visible">
                     {scanStats.map((stat, index) => (
                         <BarPair
                             key={index}
-                            h1={`${stat.healthy}%`}
-                            h2={`${stat.diseased}%`}
+                            h1={`${Math.round((stat.healthy / maxCount) * 100)}%`}
+                            h2={`${Math.round((stat.diseased / maxCount) * 100)}%`}
                             label={stat.label}
+                            healthy={stat.healthy}
+                            diseased={stat.diseased}
                         />
                     ))}
                 </HStack>
@@ -112,9 +143,8 @@ export const HealthOverviewCharts = ({ data }: HealthOverviewChartsProps) => {
                     />
 
                     <VStack align="flex-start" gap="4">
-                        <LegendItem color="green.700" label="Healthy" value={`${healthyPct}%`} />
-                        <LegendItem color="red.300" label="Diseased" value={`${diseasedPct}%`} />
-                        <LegendItem color="yellow.400" label="Moderate" value={`${moderatePct}%`} />
+                        <LegendItem color="green.700" label="Healthy" value={`${healthyPct}%`} count={healthyCount} />
+                        <LegendItem color="red.400" label="Diseased" value={`${diseasedPct}%`} count={diseasedCount} />
                     </VStack>
                 </Flex>
             </Box>
@@ -123,9 +153,39 @@ export const HealthOverviewCharts = ({ data }: HealthOverviewChartsProps) => {
     )
 }
 
-function BarPair({ h1, h2, label }: any) {
+function BarPair({ h1, h2, label, healthy, diseased }: { h1: string; h2: string; label: string; healthy: number; diseased: number }) {
+    const [hovered, setHovered] = useState(false)
+    const total = healthy + diseased
+
     return (
-        <VStack flex="1" gap="2" h="full" justify="flex-end">
+        <VStack
+            flex="1" gap="2" h="full" justify="flex-end"
+            position="relative"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+        >
+            {hovered && total > 0 && (
+                <Box
+                    position="absolute"
+                    bottom="calc(100% + 6px)"
+                    left="50%"
+                    transform="translateX(-50%)"
+                    bg="gray.800"
+                    color="white"
+                    px="2.5"
+                    py="1.5"
+                    borderRadius="md"
+                    fontSize="xs"
+                    whiteSpace="nowrap"
+                    zIndex={20}
+                    boxShadow="md"
+                    pointerEvents="none"
+                >
+                    <Text fontWeight="bold" color="white">{total} scan{total !== 1 ? 's' : ''}</Text>
+                    <HStack gap="1.5"><Box w="2" h="2" borderRadius="full" bg="green.400" /><Text color="gray.300">{healthy} healthy</Text></HStack>
+                    <HStack gap="1.5"><Box w="2" h="2" borderRadius="full" bg="red.400" /><Text color="gray.300">{diseased} diseased</Text></HStack>
+                </Box>
+            )}
             <HStack align="flex-end" w="full" h="full" gap="1">
                 <Box w="full" h={h1} bg="green.700" borderRadius="sm" />
                 <Box w="full" h={h2} bg="red.200" borderRadius="sm" />
@@ -135,14 +195,17 @@ function BarPair({ h1, h2, label }: any) {
     )
 }
 
-function LegendItem({ color, label, value }: any) {
+function LegendItem({ color, label, value, count }: { color: string; label: string; value: string; count: number }) {
     return (
-        <HStack gap="4" w="full" minW="140px" justify="space-between">
+        <HStack gap="4" w="full" minW="160px" justify="space-between">
             <HStack gap="3">
-                <Box w="4" h="4" bg={color} borderRadius="md" /> {/* Малку поголеми квадратчиња */}
+                <Box w="4" h="4" bg={color} borderRadius="md" />
                 <Text fontSize="sm" fontWeight="medium" color="gray.600">{label}</Text>
             </HStack>
-            <Text fontSize="sm" fontWeight="bold" color="gray.900">{value}</Text>
+            <VStack gap="0" align="flex-end">
+                <Text fontSize="sm" fontWeight="bold" color="gray.900">{count}</Text>
+                <Text fontSize="xs" color="gray.400">({value})</Text>
+            </VStack>
         </HStack>
     )
 }

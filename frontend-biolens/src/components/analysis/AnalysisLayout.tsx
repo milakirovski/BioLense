@@ -8,6 +8,7 @@ import { UploadPanel } from '@/components/analysis/UploadPanel'
 import { ResultPanel } from '@/components/analysis/ResultPanel'
 import { StatsPanel } from '@/components/analysis/StatsPanel'
 import { routes } from '@/lib/routes'
+import { useFields } from '@/hooks/useFields'
 import type { AnalysisResult, DiagnosisEntry, PlantIdResponse } from '@/types/analysis'
 
 function parseTreatment(result?: PlantIdResponse['result']) {
@@ -41,6 +42,8 @@ function parseResult(data: PlantIdResponse, fallbackPlant: string) {
 }
 
 export function AnalysisLayout() {
+  const { fields } = useFields()
+  const [selectedFieldId, setSelectedFieldId] = useState<number | null>(null)
   const [diagnoses, setDiagnoses]       = useState<DiagnosisEntry[]>([])
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl]     = useState<string>('')
@@ -54,9 +57,8 @@ export function AnalysisLayout() {
   useEffect(() => {
     const loadMeta = async () => {
       try {
-        const res = await fetch(routes.crops.diagnoses)
-        if (!res.ok) throw new Error('Failed to load data.')
-        setDiagnoses((await res.json()) ?? [])
+        const res = await axios.get<DiagnosisEntry[]>(routes.crops.diagnoses)
+        setDiagnoses(res.data ?? [])
       } catch (error) {
         setErrorMessage(error instanceof Error ? error.message : 'Failed to load data.')
       } finally {
@@ -90,20 +92,20 @@ export function AnalysisLayout() {
     try {
       const formData = new FormData()
       formData.append('image', selectedFile)
-      const res = await fetch(routes.crops.diagnose, { method: 'POST', body: formData })
-      if (!res.ok) throw new Error('Analysis request failed.')
-      const data: PlantIdResponse = await res.json()
+      const res = await axios.post<PlantIdResponse>(routes.crops.diagnose, formData)
+      const data = res.data
 
       const parsed = parseResult(data, 'Unknown plant')
       const nowIso = new Date().toISOString()
 
+      const selectedField = fields.find((f) => f.id === selectedFieldId)
       setAnalysis({
         plantName:     parsed.plantName,
         diseaseName:   parsed.diseaseName,
         confidence:    parsed.confidence,
         severity:      parsed.severity,
         stage:         parsed.stage,
-        fieldLabel:    '—',
+        fieldLabel:    selectedField?.name ?? '—',
         scannedAt:     nowIso,
         treatmentTips: parsed.treatmentTips,
       })
@@ -122,20 +124,29 @@ export function AnalysisLayout() {
     try {
       // Create the crop from the AI-identified plant
       const today = new Date().toISOString().split('T')[0]
+      const selectedField = fields.find((f) => f.id === selectedFieldId)
       const cropRes = await axios.post<{ id: number }>(routes.crops.create, {
         plantType:    analysis.plantName,
-        fieldName:    `${analysis.plantName} Field`,
+        fieldName:    selectedField?.name ?? `${analysis.plantName} Field`,
         areaHectares: 1.0,
         plantedAt:    today,
       })
       const cropId = cropRes.data.id
 
+      // Assign the new crop to the selected field (only if no crop is already assigned)
+      if (selectedFieldId && selectedField && !selectedField.plantedCrop) {
+        await axios.put(routes.fields.update(selectedFieldId), {
+          name:        selectedField.name,
+          description: selectedField.description,
+          plantedCrop: { id: cropId },
+        })
+      }
+
       // Diagnose the crop (saves the diagnosis)
       const formData = new FormData()
       formData.append('image', selectedFile)
-      const diagRes = await fetch(routes.crops.diagnoseForCrop(cropId), { method: 'POST', body: formData })
-      if (!diagRes.ok) throw new Error('Failed to save diagnosis.')
-      const data: PlantIdResponse = await diagRes.json()
+      const diagRes = await axios.post<PlantIdResponse>(routes.crops.diagnoseForCrop(cropId), formData)
+      const data = diagRes.data
 
       const parsed = parseResult(data, analysis.plantName)
       const nowIso = new Date().toISOString()
@@ -176,6 +187,9 @@ export function AnalysisLayout() {
             onAnalyze={() => void onAnalyze()}
             isAnalyzing={isAnalyzing}
             previewUrl={imageInResult ? '' : previewUrl}
+            fields={fields}
+            selectedFieldId={selectedFieldId}
+            onFieldChange={setSelectedFieldId}
           />
           <ResultPanel
             analysis={analysis}

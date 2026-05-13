@@ -22,7 +22,7 @@ export default function RegisterPage() {
   const set = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     if (form.password !== form.repeatPassword) {
       setError('Passwords do not match.')

@@ -11,6 +11,7 @@ export interface HistoryItem {
   disease: string
   conf: number
   date: string
+  rawDate: string
   status: string
 }
 
