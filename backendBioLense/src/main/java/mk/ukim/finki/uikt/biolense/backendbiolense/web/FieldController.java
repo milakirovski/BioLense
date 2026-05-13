@@ -31,7 +31,8 @@ public class FieldController {
     }
 
     @PostMapping
-    public Field createField(@RequestBody Field field) {
+    public Field createField(@RequestBody Field field, @AuthenticationPrincipal User user) {
+        field.setOwner(user);
         return fieldService.createField(field);
     }
 

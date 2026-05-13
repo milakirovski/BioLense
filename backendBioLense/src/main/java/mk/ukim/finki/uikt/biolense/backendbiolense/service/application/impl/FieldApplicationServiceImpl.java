@@ -40,7 +40,6 @@ public class FieldApplicationServiceImpl implements FieldApplicationService {
             field.setName(updatedField.getName());
             field.setDescription(updatedField.getDescription());
             field.setPlantedCrop(updatedField.getPlantedCrop());
-            field.setOwner(updatedField.getOwner());
             return fieldRepository.save(field);
         }).orElse(null);
     }
